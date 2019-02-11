@@ -1,4 +1,7 @@
 <template>
+    <div>
+    <h3 style="text-align: center;"> Side Menu </h3>
+    </div>
 </template>
 
 <script>
