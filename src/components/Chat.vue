@@ -8,7 +8,7 @@
             <el-col :span="4"><div class="grid-content bg-purple-light"></div></el-col>
             <el-col :span="4"><div class="grid-content bg-purple"></div></el-col>
             <el-col :span="4">
-                <div class="grid-content bg-purple-light" >
+                <div class="grid-content bg-purple-light top-icons" >
                     <el-button  type="text" @click="sendMessage">
                         <ion-icon size="large" name="call"></ion-icon>
                     </el-button>
@@ -24,22 +24,37 @@
         <div class="message-area-parent">
             <div class="message-area">
                 <div class="messages" v-for="(msg, index) in messages" :key="index">
-                    
-
                        
-                        <div class="chat-me">
+                        <!-- <div class="chat-me">
                             <span class="font-weight-bold" style="color: black;">{{msg.user}}</span>:
-                             <span>{{ msg.message }}</span>
-                        </div>                 
+                            <span>{{ msg.message }}</span>
+                        </div>     -->
+                    <div class="chat">
+                        <div class="chat-me">
+                            {{msg.message}}
+                        </div>
+                        <div class="clr">
+
+                        </div>
+                        <div class="chat-you">
+                            <span class="font-weight-bold" style="color:black;">{{msg.user}} </span> {{msg.message}}
+                        </div>
+                        <div class="clr">
+
+                        </div>
+                    </div>
+
+
+
                 </div>
             </div>
         </div>
             <!-- Commented out the select user -->
             
             
-        <el-form ref="form" :model="formInLine" >
+        <!-- <el-form ref="form" :model="formInLine" >
             <input type="text" v-model="user" class="form-control">
-        </el-form>
+        </el-form> -->
 
         <el-row :gutter="20">
             <el-form >
@@ -49,7 +64,7 @@
                     </el-form-item>
                 </el-col>
                 <el-col :span="4" >
-                    <el-form-item>
+                    <el-form-item class="top-icons">
                             <el-button  type="text" @click="sendMessage">
                                 <ion-icon size="large" name="send"></ion-icon>
                             </el-button>
@@ -115,36 +130,48 @@ export default {
 }
 
 /**/
-.input-area{
+
+
+
+
+
+
+/**/
+.top-icons{
+    text-align: center;
+}
+.chat {
+    position: relative;
+    border-radius: .4em;
+    padding-left: 10px;
+    padding-right: 10px;
+    
     
 }
-.chat-me{
+.chat-me {
+    background: lightseagreen;
+    color: white;
+    border-radius: 15px 10px 0px 15px;
+    padding: 7px;
+
+    max-width: 40%;
+    float: right;
+}
+.chat-you {
     background: lightcoral;
     color: white;
-    max-width: 50%;
-    margin-bottom: 10px ;
-    border-radius: 10px;
-    padding: 5px;
-    display: inline-block;
-    
+    border-radius: 10px 15px 15px 0px;
+    padding: 7px;
+    max-width: 40%;
+    float: left;
 }
 
-.chat-you {
-    background: lightgreen;
-    color: white;
-    
-    border-radius: 20px;
-    padding: 5px;
-    margin-left: 70px;
-    margin-right: 60%;
-    display: inline-block;
-    
+	
+
+.clr{
+    clear:both;
+    padding-bottom: 10px;
 }
-
-
-
-
-
 /**/
      .grid-content {
     border-radius: 4px;
