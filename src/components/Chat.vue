@@ -1,80 +1,100 @@
 <template>
     <el-card class="box-card">
 
-        <el-row :gutter="20">
-            <el-col :span="4"><div class="grid-content bg-purple"></div></el-col>
-            <el-col :span="4"><div class="grid-content bg-purple-light"></div></el-col>
-            <el-col :span="4"><div class="grid-content bg-purple"></div></el-col>
-            <el-col :span="4"><div class="grid-content bg-purple-light"></div></el-col>
-            <el-col :span="4"><div class="grid-content bg-purple"></div></el-col>
-            <el-col :span="4">
-                <div class="grid-content bg-purple-light top-icons" >
-                    <el-button  type="text" @click="sendMessage">
-                        <ion-icon size="large" name="call"></ion-icon>
-                    </el-button>
-                    <el-button type="text" >
-                        <ion-icon size="large" name="videocam"></ion-icon>
-                    </el-button>
-                    <el-button type="text" >
-                        <ion-icon size="large" name="settings"></ion-icon>
-                    </el-button>
-                </div>
-            </el-col>
-        </el-row>
+        <div class="chat-header">
+            <el-row type="flex" class="row-bg" justify="space-between">
+                <el-col :span="6">
+                    <div class="grid-content bg-purple">
+                        <div class="image-profile" >
+                            <img  src="https://pbs.twimg.com/profile_images/919197168245751813/9hUje-Yq_400x400.jpg"
+                                style=" border-radius: 50%; 
+                                        max-height: 50px;">
+                            </img>
+                        </div>
+                    </div>
+                </el-col>
+                <el-col :span="6">
+                    <h1> 
+                        {{this.user}}
+                    </h1>
+                </el-col>
+                <el-col :span="6" >
+                    <div class="grid-content bg-purple-light" >
+                        <el-button  type="text" @click="sendMessage">
+                            <ion-icon size="large" name="call"></ion-icon>
+                        </el-button>
+                        <el-button type="text" >
+                            <ion-icon size="large" name="videocam"></ion-icon>
+                        </el-button>
+                        <el-button type="text" >
+                            <ion-icon size="large" name="settings"></ion-icon>
+                        </el-button>
+                        
+                    </div>
+                </el-col>
+            </el-row>
+        </div>
         <div class="message-area-parent">
             <div class="message-area">
                 <div class="messages" v-for="(msg, index) in messages" :key="index">
-                       
-                        <!-- <div class="chat-me">
-                            <span class="font-weight-bold" style="color: black;">{{msg.user}}</span>:
-                            <span>{{ msg.message }}</span>
-                        </div>     -->
+                    
                     <div class="chat">
-                        <div class="chat-me">
+                        <div  :class="{'chat-me' : msg.type == 'me'}">
                             {{msg.message}}
                         </div>
-                        <div class="clr">
-
-                        </div>
-                        <div class="chat-you">
-                            <span class="font-weight-bold" style="color:black;">{{msg.user}} </span> {{msg.message}}
-                        </div>
-                        <div class="clr">
-
+                            <div class="clr">
+                            </div>
+                        <div class="user2">
+                            <!-- <div class="image-profile" >
+                                <img  src="https://pbs.twimg.com/profile_images/919197168245751813/9hUje-Yq_400x400.jpg"
+                                    style=" border-radius: 50%;
+                                            float: left;
+                                            max-height: 35px;
+                                            border-right: 5px;
+                                            margin-right: 10px;
+                                            margin-bottom: 10px;">
+                                </img>
+                                
+                            </div>
+                            <div  class="chat-you">
+                                {{msg.message}}
+                            </div>
+                            <div class="clr">
+                            </div> -->
                         </div>
                     </div>
-
-
-
                 </div>
             </div>
         </div>
-            <!-- Commented out the select user -->
-            
-            
+        
+        <!-- Commented out the select user -->    
         <!-- <el-form ref="form" :model="formInLine" >
             <input type="text" v-model="user" class="form-control">
         </el-form> -->
 
-        <el-row :gutter="20">
+        <el-row :gutter="20" >
             <el-form >
-                <el-col :span="20">
+                <el-col :sm="16" :xl="20">
                     <el-form-item label="    ">
                         <el-input v-model="message"></el-input>
                     </el-form-item>
                 </el-col>
-                <el-col :span="4" >
-                    <el-form-item class="top-icons">
-                            <el-button  type="text" @click="sendMessage">
+                <el-col :sm="8":xl="4" >
+                    <el-form-item style="text-align:center;">
+                            <el-button  type="text" style="color: turquoise;" @click="sendMessage">
                                 <ion-icon size="large" name="send"></ion-icon>
                             </el-button>
                             <el-button type="text" >
-                                <ion-icon size="large" name="attach"></ion-icon>
+                               <ion-icon size="large" name="happy"></ion-icon>
+                            </el-button>
+                            <el-button type="text"  >
+                               <ion-icon size="large" name="attach"></ion-icon>
                             </el-button>
                             <el-button type="text" >
-                                <ion-icon size="large" name="images"></ion-icon>
-                            </el-button>
+                        <ion-icon size="large" name="images"></ion-icon>
+                    </el-button>
                     </el-form-item>
+                    
                 </el-col>
             </el-form>
         </el-row>
@@ -88,7 +108,7 @@ import io from 'socket.io-client';
 export default {
     data() {
         return {
-            user: 'John',
+            user: 'John Locke',
             message: '',
             messages: [],
             socket : io('localhost:3001')
@@ -97,13 +117,20 @@ export default {
     methods: {
         sendMessage(e) {
             this.socket.emit('SEND_MESSAGE', {
+                type: 'me',
                 user: this.user,
                 message: this.message
             });
             this.message = ''
 
         },
-        
+        // Trying to emulate user2 sending back a message
+        sendExplicitMsg: function(mytype,mymsg) {
+                this.socket.emit('SEND_MESSAGE', {
+                type: mytype,
+                message: mymsg
+            });
+        },
         
     },
     mounted() {
@@ -115,38 +142,37 @@ export default {
 }
 </script>
 
+
+
 <style>
+
+body{
+    
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    font-weight: 300;
+
+}
+
 .message-area-parent{
     overflow: hidden;
     height: 500px;
 }
 .message-area{
-    
     max-height: 500px;
     overflow-y: scroll;
-    
-    margin-right: -2%; /* PREVENT SCOLL BARmaximum width of scrollbar */
+    margin-right: -2%; /* PREVENT SCOLL BAR maximum width of scrollbar */
   
 }
 
-/**/
-
-
-
-
-
-
-/**/
-.top-icons{
-    text-align: center;
+.el-button{
+    padding: 0px;
 }
 .chat {
     position: relative;
     border-radius: .4em;
     padding-left: 10px;
     padding-right: 10px;
-    
-    
+
 }
 .chat-me {
     background: lightseagreen;
@@ -156,26 +182,33 @@ export default {
 
     max-width: 40%;
     float: right;
+    
+}
+
+.img{
+    border-radius: 50%;
+    float: left;
+    max-height: 35px;
+    border-right: 5px;
+    margin-right: 10px;
+    
 }
 .chat-you {
     background: lightcoral;
     color: white;
-    border-radius: 10px 15px 15px 0px;
+    border-radius: 15px 15px 15px 0px;
     padding: 7px;
     max-width: 40%;
     float: left;
+    
 }
-
-	
-
 .clr{
     clear:both;
     padding-bottom: 10px;
 }
 /**/
-     .grid-content {
-    border-radius: 4px;
-    min-height: 36px;
+.grid-content {
+    float: right;
   }
   .bg-purple {
     background: white;
