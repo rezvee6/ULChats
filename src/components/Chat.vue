@@ -37,9 +37,8 @@
         <div class="message-area-parent">
             <div class="message-area">
                 <div class="messages" v-for="(msg, index) in messages" :key="index">
-                    
                     <div class="chat">
-                        <div  :class="{'chat-me' : msg.type == 'me'}">
+                        <div  :class="{'chat-me' : msg.type == 'me','chat-you' : msg.type == 'you'}">
                             {{msg.message}}
                         </div>
                             <div class="clr">
@@ -67,10 +66,6 @@
             </div>
         </div>
         
-        <!-- Commented out the select user -->    
-        <!-- <el-form ref="form" :model="formInLine" >
-            <input type="text" v-model="user" class="form-control">
-        </el-form> -->
 
         <el-row :gutter="20" >
             <el-form >
@@ -87,9 +82,22 @@
                             <el-button type="text" >
                                <ion-icon size="large" name="happy"></ion-icon>
                             </el-button>
+
+
+                            <el-upload
+                            class="upload-demo"
+                            action="https://jsonplaceholder.typicode.com/posts/"
+                            :before-remove="beforeRemove"
+                            >
                             <el-button type="text"  >
                                <ion-icon size="large" name="attach"></ion-icon>
                             </el-button>
+                            
+                            </el-upload>
+                            
+
+
+
                             <el-button type="text" >
                         <ion-icon size="large" name="images"></ion-icon>
                     </el-button>
@@ -108,38 +116,52 @@ import io from 'socket.io-client';
 export default {
     data() {
         return {
-            user: 'John Locke',
+            user: '',
             message: '',
             messages: [],
             socket : io('localhost:3001')
         }
     },
     methods: {
+            beforeRemove(file) {
+                return this.$confirm('Remove '+ file.name +'?');
+            },
+
         sendMessage(e) {
             this.socket.emit('SEND_MESSAGE', {
-                type: 'me',
+                type: 'you',
                 user: this.user,
                 message: this.message
             });
             this.message = ''
 
-        },
+        }
         // Trying to emulate user2 sending back a message
-        sendExplicitMsg: function(mytype,mymsg) {
-                this.socket.emit('SEND_MESSAGE', {
-                type: mytype,
-                message: mymsg
-            });
-        },
+       
         
+    },
+    created(){
+            var names = ["Rez", "Ciaran", "Eoghan", "Tom", "John", "Pat", "Colin", "Ryan", "Sam", "Bill", "Tim", "larry", "jacob"]
+            var name = names[Math.floor(Math.random() * Math.floor(13))]
+            console.log(name)
+            this.user = name
     },
     mounted() {
         this.socket.on('MESSAGE', (data) => {
             this.messages = [...this.messages, data];
-            // you can also do this.messages.push(data)
+        });
+
+
+        this.socket.on('CLIENT_QUERY', (data) => {
+            this.socket.emit('CLIENT_INFO', {
+                type: 'clientInfo',
+                user: this.user,
+                socketID: this.socket.id
+            });
         });
     }
 }
+
 </script>
 
 
