@@ -20,7 +20,7 @@
                 </el-col>
                 <el-col :span="6" >
                     <div class="grid-content bg-purple-light" >
-                        <el-button  type="text" @click="sendMessage">
+                        <el-button  type="text" >
                             <ion-icon size="large" name="call"></ion-icon>
                         </el-button>
                         <el-button type="text" >
@@ -80,27 +80,13 @@
                                 <ion-icon size="large" name="send"></ion-icon>
                             </el-button>
                             <el-button type="text" >
-                               <ion-icon size="large" name="happy"></ion-icon>
-                            </el-button>
-
-
                             <el-upload
-                            class="upload-demo"
                             action="https://jsonplaceholder.typicode.com/posts/"
                             :before-remove="beforeRemove"
                             >
-                            <el-button type="text"  >
-                               <ion-icon size="large" name="attach"></ion-icon>
-                            </el-button>
-                            
+                            <ion-icon size="large" name="attach"></ion-icon>
                             </el-upload>
-                            
-
-
-
-                            <el-button type="text" >
-                        <ion-icon size="large" name="images"></ion-icon>
-                    </el-button>
+                            </el-button>
                     </el-form-item>
                     
                 </el-col>
