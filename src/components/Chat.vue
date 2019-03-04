@@ -120,9 +120,12 @@ export default {
         var me = sampleNames[Math.floor(Math.random() * Math.floor(13))]
         var name = sampleNames[Math.floor(Math.random() * Math.floor(13))]
         this.user = name
-        this.me = me
+        // this.me = me
     },
-    mounted() {
+    beforeMount() {
+
+        this.me = this.$attrs.username
+
         this.socket.on('MESSAGE', (data) => {
             console.log("I recieved a message")
             console.log("messagesRecieved: ", this.messagesRecieved)

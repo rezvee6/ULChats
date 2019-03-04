@@ -5,8 +5,8 @@
         </el-aside>
         <el-container>
           <el-main>
-            <h1> Logged in as {{myUserName}} </h1>
-            <Chat />
+            <!-- <h1> Logged in as {{myUserName}} </h1> -->
+            <Chat :username="this.myUserName"/>
           </el-main>
         </el-container>
       </el-container>
