@@ -9,7 +9,6 @@
                             <img  src="https://pbs.twimg.com/profile_images/919197168245751813/9hUje-Yq_400x400.jpg"
                                 style=" border-radius: 50%; 
                                         max-height: 50px;">
-                            </img>
                         </div>
                     </div>
                 </el-col>
@@ -65,7 +64,6 @@
                 </div>
             </div>
         </div>
-        
 
         <el-row :gutter="20" >
             <el-form >
@@ -74,7 +72,7 @@
                         <el-input v-model="message"></el-input>
                     </el-form-item>
                 </el-col>
-                <el-col :sm="8":xl="4" >
+                <el-col :sm="8" :xl="4" >
                     <el-form-item style="text-align:center;">
                             <el-button  type="text" style="color: turquoise;" @click="sendMessage">
                                 <ion-icon size="large" name="send"></ion-icon>
@@ -98,6 +96,7 @@
 
 <script>
 import io from 'socket.io-client';
+import {sampleNames} from './chat.js'
 
 export default {
     data() {
@@ -109,10 +108,9 @@ export default {
         }
     },
     methods: {
-            beforeRemove(file) {
+        beforeRemove(file) {
                 return this.$confirm('Remove '+ file.name +'?');
             },
-
         sendMessage(e) {
             this.socket.emit('SEND_MESSAGE', {
                 type: 'you',
@@ -122,21 +120,16 @@ export default {
             this.message = ''
 
         }
-        // Trying to emulate user2 sending back a message
-       
-        
     },
-    created(){
-            var names = ["Rez", "Ciaran", "Eoghan", "Tom", "John", "Pat", "Colin", "Ryan", "Sam", "Bill", "Tim", "larry", "jacob"]
-            var name = names[Math.floor(Math.random() * Math.floor(13))]
-            console.log(name)
-            this.user = name
+    created() {
+        // Grabs a random index from the names array
+        var name = sampleNames[Math.floor(Math.random() * Math.floor(13))]
+        this.user = name
     },
     mounted() {
         this.socket.on('MESSAGE', (data) => {
             this.messages = [...this.messages, data];
         });
-
 
         this.socket.on('CLIENT_QUERY', (data) => {
             this.socket.emit('CLIENT_INFO', {

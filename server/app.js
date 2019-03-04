@@ -1,22 +1,18 @@
 
 const express = require('express');
 
-
 const app = express();
 
-
-
-const server = app.listen(3001, function() {
+const server = app.listen(3001, _ => {
     console.log('server running on port 3001');
 });
 
-
 const io = require('socket.io')(server);
 
-var clients = []
-var onlineUsers = []
-io.on('connection', function(socket) {
+let clients = []
+let onlineUsers = []
 
+io.on('connection', (socket) => {
     //send a message to socket ID .. who are you 
     io.to(socket.id).emit('CLIENT_QUERY', {
         type: 'clientQuery',
