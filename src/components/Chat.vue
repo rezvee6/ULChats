@@ -1,11 +1,11 @@
 <template>
     <div>
     <el-card class="box-card">
-         <h1> Logged in as {{this.me}} </h1>
-         <hr>
+        <h1> Logged in as {{this.me}} </h1>
+        <h3> Bio: {{this.bio}} </h3>
+        <hr>
         <div class="chat-header">
             <el-row type="flex" class="row-bg" justify="space-between">
-
                 <el-col :span="6">
                     <div class="grid-content bg-purple">
                         <div class="image-profile" >
@@ -16,8 +16,9 @@
                     </div>
                 </el-col>
                 <el-col :span="6">
-                    <h1> 
-                        {{this.user}}
+                    <h1>
+                        Talking to 
+                        {{this.friend}}
                     </h1>
                 </el-col>
                 <el-col :span="6" >
@@ -86,12 +87,14 @@
 <script>
 import io from 'socket.io-client';
 import {sampleNames} from './chat.js'
+import {bus} from '../bus.js'
+import store from '../store.js'
 
 export default {
     data() {
         return {
             me: '',
-            user: '',
+            friend: '',
             message: '',
             messagesSent: [],
             messagesRecieved: [],
@@ -103,27 +106,27 @@ export default {
             return this.$confirm('Remove '+ file.name +'?');
         },
         sendMessage(e) {
-            
             // maintain a local copy of messages sent
             console.log("The following message was sent: ", this.message)
             this.messagesSent.push(this.message)
             console.log("messagesSent: ", this.messagesSent)
             this.socket.emit('SEND_MESSAGE', {
-                user: this.user,
+                user: this.friend,
                 message: this.message
             });
             this.message = ''
         }
     },
     created() {
-        // Grabs a random index from the names array & assign to local scope
-        var me = sampleNames[Math.floor(Math.random() * Math.floor(13))]
-        var name = sampleNames[Math.floor(Math.random() * Math.floor(13))]
-        this.user = name
-        // this.me = me
+        bus.$on('friendChosen', _ => {
+            console.log("Setting friend to talk to")
+            this.friend = store.state.friend
+        })
+        console.log(this.friend)
     },
     beforeMount() {
         this.me = this.$attrs.username
+        this.bio = this.$attrs.bio
 
         this.socket.on('MESSAGE', (data) => {
             console.log("I recieved a message")
@@ -139,14 +142,10 @@ export default {
             this.socket.emit('CLIENT_INFO', {
                 type: 'clientInfo',
                 user: this.me,
+                bio: this.bio,
                 socketID: this.socket.id
             });
         });
-
-        this.socket.on('ONLINE_USERS', data => {
-            console.log("Recieved broadcast information")
-            console.log("bdata: ", data)
-        })
     }
 }
 </script>

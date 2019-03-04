@@ -2,13 +2,13 @@
 <div>
   <el-row :gutter="20">
       <el-col :span="8" :offset="8">
-            <h1> Login </h1>
+      <h1> Login </h1>
       <h5> Enter Username </h5>
       <el-input placeholder="Please input first name" v-model="inputs.username"></el-input>
       <br>
-      <h5> Enter password </h5>
-      <el-input type="password" placeholder="Please input second name" v-model="inputs.pass"></el-input>
-      <br> 
+      <h5> Enter Bio </h5>
+      <el-input placeholder="Please input bio" v-model="inputs.bio"></el-input>
+      <br>
       <br>
       <br>
       <el-button @click="goToChat" type="primary" size="large">Login</el-button>
@@ -24,14 +24,15 @@ export default {
     return {
       inputs: {
         username: '',
-        pass: ''
+        bio: '',
+        gender: ''
       }
     }
   },
   methods: {
     goToChat() {
       console.log(this.inputs.username)
-      this.$router.push({ name: 'Chat', params: {userId: this.inputs.username }})
+      this.$router.push({ name: 'Chat', params: {userId: this.inputs.username, bio: this.inputs.bio }})
     }
   }
 }

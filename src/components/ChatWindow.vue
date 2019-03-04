@@ -2,11 +2,11 @@
 <el-container>
         <el-aside width="30%">
           <SideMenu />
-          <FriendsView />
+          <FriendsView :username="this.myUserName" />
         </el-aside>
         <el-container>
           <el-main>
-            <Chat :username="this.myUserName"/>
+            <Chat :username="this.myUserName" :bio="this.myBio"/>
           </el-main>
         </el-container>
       </el-container>
@@ -25,11 +25,13 @@ export default {
   },
   data () {
     return {
-      myUserName: ''
+      myUserName: '',
+      myBio: ''
     }
   },
   beforeMount () {
     this.myUserName = this.$attrs.userId
+    this.myBio = this.$attrs.bio
   }
 }
 </script>

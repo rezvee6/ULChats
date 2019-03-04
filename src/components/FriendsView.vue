@@ -1,7 +1,7 @@
 <template>
     <div id=friendsList>
         <!--<friendList-component v-for="friend in friends" :friend="frined"/>-->
-        <div class="friend" :style="styleObject" v-for="friend in friends" v-on:click="selectFriend($event)" :friend="friend">
+        <div class="friend" :style="styleObject" v-for="friend in friends" v-on:click="selectFriend(friend)" :friend="friend">
             <div class="box">
                 <article class="media">
                     <div class="media-left">
@@ -22,79 +22,43 @@
 </template>
 
 <script>
-  export default {
-        data() {
-            return {
-                friends: [
-                    {
-                        id: 1,
-                        name: 'James',
-                        img: 'https://www.shareicon.net/data/128x128/2016/09/01/822711_user_512x512.png',
-                        msg: 'Puppy kitty ipsum dolor sit good dog tigger good boy furry teeth purr lazy cat run fast fish critters string.'
-                    },
-                    {
-                        id: 2,
-                        name: 'Jessica',
-                        img: 'https://www.shareicon.net/data/128x128/2016/09/01/822739_user_512x512.png',
-                        msg: 'Wag Tail tuxedo run bedding head chew food purr drool kisses carrier chirp toy ID tag slobbery smooshy.',
-                    },
-                    {
-                        id: 3,
-                        name: 'Heather',
-                        img: 'https://www.shareicon.net/data/128x128/2016/09/01/822761_user_512x512.png',
-                        msg: 'Rover maine coon cat speak harness whiskers mouse.',
-                    },
-                    {
-                        id: 4,
-                        name: 'Arthur',
-                        img: 'https://www.shareicon.net/data/128x128/2016/09/01/822745_user_512x512.png',
-                        msg: 'Toys stay finch polydactyl stay barky bark pet supplies food Buddy chirp Spike nap stick dog house throw.Tail collar leash Rover meow catch Scooby snacks.',
-                    },
-                    {
-                        id: 5,
-                        name: 'Francesca',
-                        img: 'https://www.shareicon.net/data/128x128/2016/09/01/822715_user_512x512.png',
-                        msg: 'Kitty bark string shake litter box toys polydactyl yawn polydactyl scratcher water dog stay cage nest slobber chirp water.',
-                    },
-                    {
-                        id: 6,
-                        name: 'Tina',
-                        img: 'https://www.shareicon.net/data/128x128/2016/09/01/822726_user_512x512.png',
-                        msg: 'Birds fur collar fluffy collar parakeet barky dog house run sit Buddy purr. Bird wag tail small animals groom vitamins Tigger.',
-                    },
-                    {
-                        id: 6,
-                        name: 'Tina',
-                        img: 'https://www.shareicon.net/data/128x128/2016/09/01/822726_user_512x512.png',
-                        msg: 'Birds fur collar fluffy collar parakeet barky dog house run sit Buddy purr. Bird wag tail small animals groom vitamins Tigger.',
-                    },
-                    {
-                        id: 6,
-                        name: 'Tina',
-                        img: 'https://www.shareicon.net/data/128x128/2016/09/01/822726_user_512x512.png',
-                        msg: 'Birds fur collar fluffy collar parakeet barky dog house run sit Buddy purr. Bird wag tail small animals groom vitamins Tigger.',
-                    },
-                    {
-                        id: 6,
-                        name: 'Tina',
-                        img: 'https://www.shareicon.net/data/128x128/2016/09/01/822726_user_512x512.png',
-                        msg: 'Birds fur collar fluffy collar parakeet barky dog house run sit Buddy purr. Bird wag tail small animals groom vitamins Tigger.',
-                    },
-                    {
-                        id: 6,
-                        name: 'Tina',
-                        img: 'https://www.shareicon.net/data/128x128/2016/09/01/822726_user_512x512.png',
-                        msg: 'Birds fur collar fluffy collar parakeet barky dog house run sit Buddy purr. Bird wag tail small animals groom vitamins Tigger.',
-                    }
-                ]
-            }
-        },
-        methods:{
-            selectFriend: function(event) {
-                alert("Friend Selected!");
-            }
+import io from 'socket.io-client';
+import store from '../store.js'
+import {bus} from '../bus.js'
+
+export default {
+    data() {
+        return {
+            socket: io('localhost:3001'),
+            friends: []
         }
+    },
+    methods:{
+        selectFriend: function(friendCard) {
+            store.commit('selectFriend', friendCard.name)
+            bus.$emit('friendChosen')
+        }
+    },
+    beforeMount() {
+        this.socket.on('ONLINE_USERS', data => {
+            console.log("Recieved broadcast information within friends view")
+            console.log("bdata: ", data)
+            this.friends = []
+            for (var i in data) {
+                console.log(data)
+                let freindObj = {
+                    id: i,
+                    name: data[i].user,
+                    img: 'https://www.shareicon.net/data/128x128/2016/09/01/822711_user_512x512.png',
+                    msg: data[i].bio
+                }
+                if (freindObj.name !== this.$attrs.username) {
+                    this.friends.push(freindObj)
+                }
+            }
+        })
     }
+}
 </script>
 
 <style scoped>
