@@ -38,18 +38,16 @@
         </div>
         <div class="message-area-parent">
             <div class="message-area">
-                <div class="messages" v-for="(msg, index) in messagesSent" :key="index">
+                <div class="messages" v-for="(msg, index) in messages" :key="index">
                     <div class="chat">
-                        <div>
+                        <div v-if="msg.user != me" class="chat-you">
                             {{msg.message}}
                         </div>
-                    </div>
-                </div>
-                <div class="messages" v-for="(msg, index) in messagesRecieved" :key="index">
-                    <div class="chat">
-                        <div>
+                        <div class="clr"></div>
+                        <div v-if="msg.user === me" class="chat-me">
                             {{msg.message}}
                         </div>
+                        <div class="clr"></div>
                     </div>
                 </div>
             </div>
@@ -58,7 +56,7 @@
         <el-row :gutter="20" >
             <el-form >
                 <el-col :sm="16" :xl="20">
-                    <el-form-item label="    ">
+                    <el-form-item label="">
                         <el-input v-model="message"></el-input>
                     </el-form-item>
                 </el-col>
@@ -96,8 +94,7 @@ export default {
             me: '',
             friend: '',
             message: '',
-            messagesSent: [],
-            messagesRecieved: [],
+            messages: [],
             socket : io('localhost:3001')
         }
     },
@@ -108,12 +105,13 @@ export default {
         sendMessage(e) {
             // maintain a local copy of messages sent
             console.log("The following message was sent: ", this.message)
-            this.messagesSent.push(this.message)
-            console.log("messagesSent: ", this.messagesSent)
-            this.socket.emit('SEND_MESSAGE', {
+            console.log(this.message)
+            let messageObj = {
                 user: this.friend,
                 message: this.message
-            });
+            }
+            this.socket.emit('SEND_MESSAGE', messageObj);
+            this.messages.push(messageObj)
             this.message = ''
         }
     },
@@ -130,9 +128,10 @@ export default {
 
         this.socket.on('MESSAGE', (data) => {
             console.log("I recieved a message")
-            console.log("messagesRecieved: ", this.messagesRecieved)
+            console.log("message: ", data)
+            console.log("messagesRecieved: ", this.messages)
             // guessing this is just a weird push?
-            this.messagesRecieved = [...this.messagesRecieved, data];
+            this.messages = [...this.messages, data];
             // this.messagesRecieved.push(data) ?
         });
 
