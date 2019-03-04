@@ -1,10 +1,10 @@
 <template>
     <div>
         <el-row>
-            <el-col :span="4">
-                <el-button @click="toggleSideMenu" type="primary" icon="el-icon-menu" plain style="width:100%;"></el-button>
+            <el-col :span="6" style="height:6vh">
+                <el-button @click="toggleSideMenu" type="primary" icon="el-icon-menu" plain style="width:100%; height:100%"></el-button>
             </el-col>
-            <el-col :span="20">
+            <el-col :span="18">
                 <el-input placeholder="Search" v-model="input"></el-input>
             </el-col>
         </el-row>
