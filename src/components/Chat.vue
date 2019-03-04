@@ -123,7 +123,6 @@ export default {
         // this.me = me
     },
     beforeMount() {
-
         this.me = this.$attrs.username
 
         this.socket.on('MESSAGE', (data) => {
