@@ -46,7 +46,8 @@
 export default {
     data() {
       return {
-        isCollapse: true
+        isCollapse: true,
+        input: ''
       };
     },
     methods: {

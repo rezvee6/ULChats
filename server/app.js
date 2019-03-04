@@ -12,7 +12,14 @@ const io = require('socket.io')(server);
 let clients = []
 let onlineUsers = []
 
+// Debug variables
+let connectionCount = 0
+
 io.on('connection', (socket) => {
+    connectionCount++
+    console.log("Recieved new connection!")
+    console.log("Connection count: ", connectionCount)
+    
     //send a message to socket ID .. who are you 
     io.to(socket.id).emit('CLIENT_QUERY', {
         type: 'clientQuery',
@@ -20,8 +27,11 @@ io.on('connection', (socket) => {
     });
 
     clients.push(socket.id)
-    console.log(socket.id)
-    console.log(clients)
+    
+    console.log("Socket Id: ", socket.id)
+    console.log("\n")
+    console.log("Clients: " , clients)
+    console.log("\n")
 
     socket.on('SEND_MESSAGE', function(data) {
         userSocketID = getSocketID(data.user)
@@ -29,11 +39,11 @@ io.on('connection', (socket) => {
     });
 
     socket.on('CLIENT_INFO', function(data) {
-        if(onlineUsers.length!=0){
-            for(var i = 0; i<onlineUsers.length; i++){
+        if(onlineUsers.length != 0){
+            for(var i = 0; i < onlineUsers.length; i++){
                 if(data.user == onlineUsers[i].user){
                     onlineUsers.splice(i, 1)
-                    for(var j = 0; j<clients.length; j++){
+                    for(var j = 0; j < clients.length; j++){
                         if(data.socketID == clients[j]){
                             clients.splice(j, 1)
                         }
@@ -42,12 +52,13 @@ io.on('connection', (socket) => {
             }
         }
         onlineUsers.push(data)
-        console.log(onlineUsers)
+        
+        console.log("onlineUsers: ", onlineUsers)
+        console.log("\n")
     });
 
    //socket.broadcast.emit('ONLINE_USERS', {userObjects:this.onlineUsers});
 
-    
 });
 
 function getSocketID(user){
