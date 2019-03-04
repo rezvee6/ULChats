@@ -55,9 +55,9 @@ io.on('connection', (socket) => {
         
         console.log("onlineUsers: ", onlineUsers)
         console.log("\n")
-    });
 
-   //socket.broadcast.emit('ONLINE_USERS', {userObjects:this.onlineUsers});
+        socket.broadcast.emit('ONLINE_USERS', onlineUsers);
+    });
 
 });
 

@@ -143,6 +143,11 @@ export default {
                 socketID: this.socket.id
             });
         });
+
+        this.socket.on('ONLINE_USERS', data => {
+            console.log("Recieved broadcast information")
+            console.log("bdata: ", data)
+        })
     }
 }
 </script>
