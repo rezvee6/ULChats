@@ -146,9 +146,21 @@ export default {
             console.log(file, fileList);
         },
         handlePreview(f) {
-            console.log(f);
-            let blob = new Blob([f.file], {type : 'image/jpg'})
-            saveAs(blob, "example.jpg")
+            if ('percentage' in f){
+                console.log(f)
+            } else {
+                // gets the file type from the filename
+                let fileType = f.fileName.split('.').pop();
+                let imageTypes = ["jpg", "png"]
+                if (fileType in imageTypes) {
+                    let blob = new Blob([f.file], {type : 'image/' + fileType})
+                    saveAs(blob, f.fileName)
+                } else {
+                    let file = new File([f.file], f.fileName, {type: "text/plain;charset=utf-8"});
+                    saveAs(file)
+                }
+
+            }
         },
         handleExceed(files, fileList) {
             this.$message.warning(`The limit is 3, you selected ${files.length} files this time, add up to ${files.length + fileList.length} totally`);
