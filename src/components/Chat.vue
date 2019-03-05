@@ -50,6 +50,16 @@
                         <div class="clr"></div>
                     </div>
                 </div>
+                <div class="files" v-for="(file, index) in fileList" :key="index">
+                     <div v-if="file.user != me">
+                            {{file}}
+                        </div>
+                        <div class="clr"></div>
+                        <div v-if="file.user === me">
+                            {{file}}
+                        </div>
+                        <div class="clr"></div>
+                </div>
             </div>
         </div>
 
@@ -65,14 +75,21 @@
                             <el-button  type="text" style="color: turquoise;" @click="sendMessage">
                                 <ion-icon size="large" name="send"></ion-icon>
                             </el-button>
-                            <el-button type="text" >
                             <el-upload
-                            action="https://jsonplaceholder.typicode.com/posts/"
-                            :before-remove="beforeRemove"
-                            >
-                            <ion-icon size="large" name="attach"></ion-icon>
+                                class="upload-demo"
+                                action=""
+                                multiple
+                                :auto-upload="false"
+                                :on-preview="handlePreview"
+                                :on-remove="handleRemove"
+                                :on-change="handleChange"
+                                :before-remove="beforeRemove"
+                                :file-list="fileList">
+                                <el-button size="small" type="text">
+                                    <ion-icon size="large" name="attach"></ion-icon>
+                                </el-button>
+                                <!-- <div slot="tip" class="el-upload__tip">jpg/png files</div> -->
                             </el-upload>
-                            </el-button>
                     </el-form-item>
                     
                 </el-col>
@@ -87,6 +104,7 @@ import io from 'socket.io-client';
 import {sampleNames} from './chat.js'
 import {bus} from '../bus.js'
 import store from '../store.js'
+import { saveAs } from 'file-saver';
 
 export default {
     data() {
@@ -95,25 +113,52 @@ export default {
             friend: '',
             message: '',
             messages: [],
-            socket : io('localhost:3001')
+            socket : io('localhost:3001'),
+            fileList: [],
         }
     },
     methods: {
-        beforeRemove(file) {
-            return this.$confirm('Remove '+ file.name +'?');
-        },
         sendMessage(e) {
             // maintain a local copy of messages sent
             console.log("The following message was sent: ", this.message)
             console.log(this.message)
+            
+            console.log("Files uploaded: ", this.fileList)
+            if(this.fileList.length != 0) {            
+                let fileObj = {
+                    user: this.friend,
+                    fileName: this.fileList[0].name,
+                    file: this.fileList[0].raw
+                }
+                this.socket.emit('SEND_FILE', fileObj);
+            }
+
             let messageObj = {
                 user: this.friend,
                 message: this.message
             }
+
             this.socket.emit('SEND_MESSAGE', messageObj);
             this.messages.push(messageObj)
             this.message = ''
-        }
+        },
+        handleRemove(file, fileList) {
+            console.log(file, fileList);
+        },
+        handlePreview(f) {
+            console.log(f);
+            let blob = new Blob([f.file], {type : 'image/jpg'})
+            saveAs(blob, "example.jpg")
+        },
+        handleExceed(files, fileList) {
+            this.$message.warning(`The limit is 3, you selected ${files.length} files this time, add up to ${files.length + fileList.length} totally`);
+        },
+        beforeRemove(file, fileList) {
+            return this.$confirm(`Cancel the transfert of ${ file.name } ?`);
+        },
+        handleChange(file, fileList) {
+            this.fileList.push(file)
+      }
     },
     created() {
         bus.$on('friendChosen', _ => {
@@ -130,10 +175,14 @@ export default {
             console.log("I recieved a message")
             console.log("message: ", data)
             console.log("messagesRecieved: ", this.messages)
-            // guessing this is just a weird push?
-            this.messages = [...this.messages, data];
-            // this.messagesRecieved.push(data) ?
+            this.messages.push(data)
         });
+
+        this.socket.on('FILE', (data) => {
+            console.log("I recieved a file")
+            console.log("file", data)
+            this.fileList.push(data)
+        })
 
         // When queried by server .. respond with username and socket id
         this.socket.on('CLIENT_QUERY', (data) => {

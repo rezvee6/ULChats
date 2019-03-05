@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "element-ui": "^2.5.4",
+    "file-saver": "^2.0.1",
     "socket.io-client": "^2.1.0",
     "vue": "^2.5.13",
     "vue-router": "^3.0.2",

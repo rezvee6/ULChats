@@ -38,6 +38,11 @@ io.on('connection', (socket) => {
         io.to(userSocketID).emit('MESSAGE', data)
     });
 
+    socket.on('SEND_FILE', data => {
+        userSocketID = getSocketID(data.user)
+        io.to(userSocketID).emit('FILE', data)
+    })
+
     socket.on('CLIENT_INFO', function(data) {
         if(onlineUsers.length != 0){
             for(var i = 0; i < onlineUsers.length; i++){
