@@ -51,12 +51,12 @@
                     </div>
                 </div>
                 <div class="files" v-for="(file, index) in fileList" :key="index">
-                     <div v-if="file.user != me">
-                            {{file}}
+                     <div v-if="file.user != me" class="chat-you">
+                           Click send to share file
                         </div>
                         <div class="clr"></div>
-                        <div v-if="file.user === me">
-                            {{file}}
+                        <div v-if="file.user === me" class="chat-me">
+                            You recieved a file check your file tray
                         </div>
                         <div class="clr"></div>
                 </div>
@@ -131,16 +131,20 @@ export default {
                     file: this.fileList[0].raw
                 }
                 this.socket.emit('SEND_FILE', fileObj);
+                this.fileList = []
             }
 
-            let messageObj = {
-                user: this.friend,
-                message: this.message
+            if (this.message != '') {
+                let messageObj = {
+                    user: this.friend,
+                    message: this.message
+                }
+
+                this.socket.emit('SEND_MESSAGE', messageObj);
+                this.messages.push(messageObj)
+                this.message = ''
             }
 
-            this.socket.emit('SEND_MESSAGE', messageObj);
-            this.messages.push(messageObj)
-            this.message = ''
         },
         handleRemove(file, fileList) {
             console.log(file, fileList);
@@ -155,9 +159,13 @@ export default {
                 if (fileType in imageTypes) {
                     let blob = new Blob([f.file], {type : 'image/' + fileType})
                     saveAs(blob, f.fileName)
+                    // delete from filelist
+                    this.fileList = []
                 } else {
                     let file = new File([f.file], f.fileName, {type: "text/plain;charset=utf-8"});
                     saveAs(file)
+                    // delete from filelist
+                    this.fileList = []
                 }
 
             }
