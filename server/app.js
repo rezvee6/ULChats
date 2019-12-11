@@ -1,4 +1,3 @@
-
 const express = require('express');
 
 const app = express();
@@ -17,21 +16,28 @@ let connectionCount = 0
 
 io.on('connection', (socket) => {
     connectionCount++
-    console.log("Recieved new connection!")
-    console.log("Connection count: ", connectionCount)
-    
-    //send a message to socket ID .. who are you 
+
     io.to(socket.id).emit('CLIENT_QUERY', {
         type: 'clientQuery',
         message: 'who are you?'
     });
 
     clients.push(socket.id)
-    
-    console.log("Socket Id: ", socket.id)
-    console.log("\n")
-    console.log("Clients: " , clients)
-    console.log("\n")
+
+    socket.on('SEND_CLIENT_SECRET_1', (data) => {
+        userSocketID = getSocketID(data.to)
+        io.to(userSocketID).emit('CLIENT_SECRET_1', data)
+    })
+
+    socket.on('SEND_CLIENT_SECRET_3', (data) => {
+        userSocketID = getSocketID(data.to)
+        io.to(userSocketID).emit('CLIENT_SECRET_3', data)
+    })
+
+    socket.on('SEND_CLIENT_SECRET_5', (data) => {
+        userSocketID = getSocketID(data.to)
+        io.to(userSocketID).emit('CLIENT_SECRET_5', data)
+    })
 
     socket.on('SEND_MESSAGE', function(data) {
         userSocketID = getSocketID(data.user)
@@ -44,6 +50,7 @@ io.on('connection', (socket) => {
     })
 
     socket.on('CLIENT_INFO', function(data) {
+        
         if(onlineUsers.length != 0){
             for(var i = 0; i < onlineUsers.length; i++){
                 if(data.user == onlineUsers[i].user){
@@ -56,13 +63,14 @@ io.on('connection', (socket) => {
                 }
             }
         }
+
         onlineUsers.push(data)
-        
+        console.log("\n")
         console.log("onlineUsers: ", onlineUsers)
         console.log("\n")
-
         socket.broadcast.emit('ONLINE_USERS', onlineUsers);
     });
+
 
 });
 

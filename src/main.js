@@ -11,5 +11,5 @@ Vue.use(ElementUI, { locale });
 export var app = new Vue({
     router,
     template: '<App/>',
-    components: { App },
+    components: { App,},
 }).$mount('#app')
