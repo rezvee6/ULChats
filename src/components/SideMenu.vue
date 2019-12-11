@@ -1,11 +1,16 @@
 <template>
     <div>
+        <div id="header">
+            <div id="headingText">
+            <img src="@/assets/logo.jpg" height="60vw">
+            </div>
+        </div> 
         <el-row>
-            <el-col :span="6" style="height:6vh">
-                <el-button @click="toggleSideMenu" type="primary" icon="el-icon-menu" plain style="width:100%; height:100%"></el-button>
+            <el-col :span="6" >
+                <el-button @click="toggleSideMenu" type="primary" icon="el-icon-menu" plain style="width:100%; height:100%; border-radius: 0 !important;"></el-button>
             </el-col>
             <el-col :span="18">
-                <el-input placeholder="Search" v-model="input"></el-input>
+                <el-input placeholder="Search" v-model="input" style="width:100%; height:100%; border-radius: 0 !important;"></el-input>
             </el-col>
         </el-row>
         
@@ -64,5 +69,25 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+
+#header{
+    background-color:rgb(231, 241, 246);
+    color: rgb(170, 198, 210);
+    height: 8vh;
+    font-size: 3vh;
+}
+
+p{
+    margin:0px;
+}
+.el-button{
+    border-radius: 0px ;
+}
+
+#headingText{
+    text-align: center;
+    padding-top:1vh
+}
+
 </style>
